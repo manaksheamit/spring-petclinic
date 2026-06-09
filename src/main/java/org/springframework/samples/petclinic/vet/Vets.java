@@ -30,8 +30,14 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Vets {
 
+	// Internal list of veterinarians, mapped to XML/JSON element structure
 	private List<Vet> vets;
 
+	/**
+	 * Gets the list of veterinarians. Initializes an empty list if null.
+	 * Annotated with {@link XmlElement} to map to xml serialization structure.
+	 * @return the list of veterinarians
+	 */
 	@XmlElement
 	public List<Vet> getVetList() {
 		if (vets == null) {

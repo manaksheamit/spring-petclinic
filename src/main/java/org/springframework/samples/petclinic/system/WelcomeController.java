@@ -19,9 +19,17 @@ package org.springframework.samples.petclinic.system;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * Controller handling requests for the landing/welcome page of the application.
+ */
 @Controller
 class WelcomeController {
 
+	/**
+	 * Mappings to the root path of the application.
+	 * Redirects to the welcome view.
+	 * @return the name of the welcome Thymeleaf template/view
+	 */
 	@GetMapping("/")
 	public String welcome() {
 		return "welcome";

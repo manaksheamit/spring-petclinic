@@ -32,16 +32,29 @@ public class NamedEntity extends BaseEntity {
 
 	@Column
 	@NotBlank
+	// Name of the entity, required for all named subclass records
 	private String name;
 
+	/**
+	 * Gets the name of the entity.
+	 * @return the name string
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Sets the name of the entity.
+	 * @param name the new name string
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Returns the name of the entity, or "<null>" if empty, representing the entity representation.
+	 * @return string representation
+	 */
 	@Override
 	public String toString() {
 		String name = this.getName();

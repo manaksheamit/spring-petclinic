@@ -22,11 +22,12 @@ import jakarta.persistence.Table;
 
 /**
  * Models a {@link Vet Vet's} specialty (for example, dentistry).
+ * Inherits the name property from {@link NamedEntity}.
  *
  * @author Juergen Hoeller
  */
 @Entity
 @Table(name = "specialties")
 public class Specialty extends NamedEntity {
-
+	// Inherits id and name properties to define a vet specialization (e.g. radiology, surgery)
 }

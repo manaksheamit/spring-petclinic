@@ -21,10 +21,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 /**
+ * Represents the type of pet (e.g. Cat, Dog, Hamster, etc.).
+ * Extends {@link NamedEntity}.
+ *
  * @author Juergen Hoeller Can be Cat, Dog, Hamster...
  */
 @Entity
 @Table(name = "types")
 public class PetType extends NamedEntity {
-
+	// Inherits id and name from NamedEntity to represent pet categories
 }

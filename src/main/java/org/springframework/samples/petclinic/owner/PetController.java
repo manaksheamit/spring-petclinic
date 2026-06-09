@@ -43,6 +43,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @author Arjen Poutsma
  * @author Wick Dynex
  */
+/**
+ * Controller handling request routing and data population for Pet entity forms (add, edit).
+ * Mapped prefix: "/owners/{ownerId}".
+ */
 @Controller
 @RequestMapping("/owners/{ownerId}")
 class PetController {
@@ -58,11 +62,20 @@ class PetController {
 		this.types = types;
 	}
 
+	/**
+	 * Populates the UI model with a collection of all available PetTypes.
+	 * @return collection of pet types
+	 */
 	@ModelAttribute("types")
 	public Collection<PetType> populatePetTypes() {
 		return this.types.findPetTypes();
 	}
 
+	/**
+	 * Populates the model with the Owner matching ownerId from path parameter.
+	 * @param ownerId unique owner identifier
+	 * @return Owner entity
+	 */
 	@ModelAttribute("owner")
 	public Owner findOwner(@PathVariable("ownerId") int ownerId) {
 		Optional<Owner> optionalOwner = this.owners.findById(ownerId);
@@ -71,6 +84,12 @@ class PetController {
 		return owner;
 	}
 
+	/**
+	 * Populates the model with the Pet matching petId, or creates a new Pet if petId is null.
+	 * @param ownerId owner's ID
+	 * @param petId pet's ID (optional)
+	 * @return Pet entity
+	 */
 	@ModelAttribute("pet")
 	public Pet findPet(@PathVariable("ownerId") int ownerId,
 			@PathVariable(name = "petId", required = false) Integer petId) {
@@ -85,17 +104,31 @@ class PetController {
 		return owner.getPet(petId);
 	}
 
+	/**
+	 * Binds form parameters for Owner entity. Prevents binding the 'id' field for security.
+	 * @param dataBinder data binder instance
+	 */
 	@InitBinder("owner")
 	public void initOwnerBinder(WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id", "*.id");
 	}
 
+	/**
+	 * Binds form parameters for Pet entity. Registers PetValidator and disallows 'id' binding.
+	 * @param dataBinder data binder instance
+	 */
 	@InitBinder("pet")
 	public void initPetBinder(WebDataBinder dataBinder) {
 		dataBinder.setValidator(new PetValidator());
 		dataBinder.setDisallowedFields("id", "*.id");
 	}
 
+	/**
+	 * Renders the form for adding a new pet.
+	 * @param owner the owner associated with the pet
+	 * @param model Thymeleaf UI map
+	 * @return view template path
+	 */
 	@GetMapping("/pets/new")
 	public String initCreationForm(Owner owner, ModelMap model) {
 		Pet pet = new Pet();
@@ -103,14 +136,25 @@ class PetController {
 		return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
 	}
 
+	/**
+	 * Processes the pet creation form submission.
+	 * Checks for duplicate pet names and ensures the birth date is not in the future.
+	 * @param owner current owner
+	 * @param pet submitted pet model details
+	 * @param result validation binding result
+	 * @param redirectAttributes redirect attributes container
+	 * @return redirect URL or form view on validation error
+	 */
 	@PostMapping("/pets/new")
 	public String processCreationForm(Owner owner, @Valid Pet pet, BindingResult result,
 			RedirectAttributes redirectAttributes) {
 
+		// Reject if the owner already has a pet with the same name
 		if (StringUtils.hasText(pet.getName()) && pet.isNew() && owner.getPet(pet.getName(), true) != null) {
 			result.rejectValue("name", "duplicate", "already exists");
 		}
 
+		// Reject future birth dates
 		LocalDate currentDate = LocalDate.now();
 		if (pet.getBirthDate() != null && pet.getBirthDate().isAfter(currentDate)) {
 			result.rejectValue("birthDate", "typeMismatch.birthDate");
@@ -126,18 +170,30 @@ class PetController {
 		return "redirect:/owners/{ownerId}";
 	}
 
+	/**
+	 * Renders the form for editing an existing pet.
+	 * @return view template path
+	 */
 	@GetMapping("/pets/{petId}/edit")
 	public String initUpdateForm() {
 		return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
 	}
 
+	/**
+	 * Processes the pet edit/update form submission.
+	 * @param owner current owner
+	 * @param pet submitted pet model details
+	 * @param result validation binding result
+	 * @param redirectAttributes redirect attributes container
+	 * @return redirect URL or form view on validation error
+	 */
 	@PostMapping("/pets/{petId}/edit")
 	public String processUpdateForm(Owner owner, @Valid Pet pet, BindingResult result,
 			RedirectAttributes redirectAttributes) {
 
 		String petName = pet.getName();
 
-		// checking if the pet name already exists for the owner
+		// checking if the pet name already exists for the owner under a different pet ID
 		if (StringUtils.hasText(petName)) {
 			Pet existingPet = owner.getPet(petName, false);
 			if (existingPet != null && !Objects.equals(existingPet.getId(), pet.getId())) {
@@ -145,6 +201,7 @@ class PetController {
 			}
 		}
 
+		// Reject future birth dates
 		LocalDate currentDate = LocalDate.now();
 		if (pet.getBirthDate() != null && pet.getBirthDate().isAfter(currentDate)) {
 			result.rejectValue("birthDate", "typeMismatch.birthDate");

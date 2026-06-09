@@ -50,50 +50,86 @@ public class Owner extends Person {
 
 	@Column
 	@NotBlank
+	// Street address of the owner
 	private String address;
 
 	@Column
 	@NotBlank
+	// City where the owner resides
 	private String city;
 
 	@Column
 	@NotBlank
 	@Pattern(regexp = "\\d{10}", message = "{telephone.invalid}")
+	// 10-digit telephone number for contact
 	private String telephone;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "owner_id")
 	@OrderBy("name")
+	// Eagerly loaded list of pets belonging to this owner, sorted by name
 	private final List<Pet> pets = new ArrayList<>();
 
+	/**
+	 * Gets the street address of the owner.
+	 * @return address string
+	 */
 	public String getAddress() {
 		return this.address;
 	}
 
+	/**
+	 * Sets the street address of the owner.
+	 * @param address new street address
+	 */
 	public void setAddress(String address) {
 		this.address = address;
 	}
 
+	/**
+	 * Gets the city where the owner lives.
+	 * @return city name
+	 */
 	public String getCity() {
 		return this.city;
 	}
 
+	/**
+	 * Sets the city where the owner lives.
+	 * @param city new city name
+	 */
 	public void setCity(String city) {
 		this.city = city;
 	}
 
+	/**
+	 * Gets the telephone number.
+	 * @return telephone digits
+	 */
 	public String getTelephone() {
 		return this.telephone;
 	}
 
+	/**
+	 * Sets the telephone number.
+	 * @param telephone new 10-digit telephone number
+	 */
 	public void setTelephone(String telephone) {
 		this.telephone = telephone;
 	}
 
+	/**
+	 * Gets the list of pets owned.
+	 * @return list of pets
+	 */
 	public List<Pet> getPets() {
 		return this.pets;
 	}
 
+	/**
+	 * Adds a pet to the owner's pet list if it's a new pet.
+	 * @param pet the pet to add
+	 */
 	public void addPet(Pet pet) {
 		if (pet.isNew()) {
 			getPets().add(pet);

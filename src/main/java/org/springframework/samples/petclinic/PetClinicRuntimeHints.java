@@ -22,14 +22,30 @@ import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.vet.Vet;
 
+/**
+ * RuntimeHintsRegistrar implementation that registers resources and serialization hints
+ * needed for running the application as a GraalVM native image.
+ */
 public class PetClinicRuntimeHints implements RuntimeHintsRegistrar {
 
+	/**
+	 * Registers specific resource patterns and serialization types.
+	 * This ensures resources (like database scripts and messages) and serializable types
+	 * are preserved and accessible in the native binary.
+	 * @param hints the runtime hints context to register metadata on
+	 * @param classLoader the class loader to use for registering hints
+	 */
 	@Override
 	public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+		// Register database schema and data SQL script paths
 		hints.resources().registerPattern("db/*"); // https://github.com/spring-projects/spring-boot/issues/32654
 		hints.resources().registerPattern("db/*/*"); // nested db/{h2,mysql,postgres}
+		// Register internationalization property bundle path
 		hints.resources().registerPattern("messages/*");
+		// Register MySQL default configuration file
 		hints.resources().registerPattern("mysql-default-conf");
+		
+		// Register core domain classes for Java serialization
 		hints.serialization().registerType(BaseEntity.class);
 		hints.serialization().registerType(Person.class);
 		hints.serialization().registerType(Vet.class);

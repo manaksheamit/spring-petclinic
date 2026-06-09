@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
+ * Controller handling requests related to veterinarians.
+ * Serves both HTML-based paginated views and REST endpoints returning JSON/XML.
+ *
  * @author Juergen Hoeller
  * @author Mark Fisher
  * @author Ken Krebs
@@ -37,10 +40,20 @@ class VetController {
 
 	private final VetRepository vetRepository;
 
+	/**
+	 * Constructor for dependency injection of VetRepository.
+	 * @param vetRepository repository for vet access
+	 */
 	public VetController(VetRepository vetRepository) {
 		this.vetRepository = vetRepository;
 	}
 
+	/**
+	 * Renders the HTML page showing a list of veterinarians, supporting pagination.
+	 * @param page the current page number requested (default is 1)
+	 * @param model UI model object for Thymeleaf
+	 * @return Thymeleaf view name representing the list page
+	 */
 	@GetMapping("/vets.html")
 	public String showVetList(@RequestParam(defaultValue = "1") int page, Model model) {
 		// Here we are returning an object of type 'Vets' rather than a collection of Vet
@@ -51,6 +64,9 @@ class VetController {
 		return addPaginationModel(page, paginated, model);
 	}
 
+	/**
+	 * Helper method to construct and populate the UI model with pagination data.
+	 */
 	private String addPaginationModel(int page, Page<Vet> paginated, Model model) {
 		List<Vet> listVets = paginated.getContent();
 		model.addAttribute("currentPage", page);
@@ -60,12 +76,20 @@ class VetController {
 		return "vets/vetList";
 	}
 
+	/**
+	 * Helper method to query a single page of Vet entities.
+	 */
 	private Page<Vet> findPaginated(int page) {
 		int pageSize = 5;
 		Pageable pageable = PageRequest.of(page - 1, pageSize);
 		return vetRepository.findAll(pageable);
 	}
 
+	/**
+	 * REST endpoint that returns a list of all veterinarians.
+	 * Handled via JSON or XML depending on the requested media type.
+	 * @return a container holding all Vet entities
+	 */
 	@GetMapping({ "/vets" })
 	public @ResponseBody Vets showResourcesVetList() {
 		// Here we are returning an object of type 'Vets' rather than a collection of Vet

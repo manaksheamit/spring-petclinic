@@ -31,25 +31,43 @@ public class Person extends BaseEntity {
 	@Column(length = 30)
 	@Size(max = 30)
 	@NotBlank
+	// First name of the person (up to 30 characters)
 	private String firstName;
 
 	@Column(length = 30)
 	@Size(max = 30)
 	@NotBlank
+	// Last name of the person (up to 30 characters)
 	private String lastName;
 
+	/**
+	 * Gets the first name of the person.
+	 * @return the first name
+	 */
 	public String getFirstName() {
 		return this.firstName;
 	}
 
+	/**
+	 * Sets the first name of the person.
+	 * @param firstName the new first name
+	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 
+	/**
+	 * Gets the last name of the person.
+	 * @return the last name
+	 */
 	public String getLastName() {
 		return this.lastName;
 	}
 
+	/**
+	 * Sets the last name of the person.
+	 * @param lastName the new last name
+	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}

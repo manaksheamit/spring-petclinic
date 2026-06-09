@@ -29,6 +29,10 @@ import org.springframework.context.annotation.ImportRuntimeHints;
 @ImportRuntimeHints(PetClinicRuntimeHints.class)
 public class PetClinicApplication {
 
+	/**
+	 * Main entry point of the application. Starts the Spring Boot container.
+	 * @param args command-line arguments passed to the application
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(PetClinicApplication.class, args);
 	}

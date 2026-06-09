@@ -32,6 +32,11 @@ import javax.cache.configuration.MutableConfiguration;
 @EnableCaching
 class CacheConfiguration {
 
+	/**
+	 * Configures a customizer for the JCache manager.
+	 * This method registers a cache named "vets" with custom statistics enabled.
+	 * @return JCacheManagerCustomizer configuration customizer
+	 */
 	@Bean
 	public JCacheManagerCustomizer petclinicCacheConfigurationCustomizer() {
 		return cm -> cm.createCache("vets", cacheConfiguration());

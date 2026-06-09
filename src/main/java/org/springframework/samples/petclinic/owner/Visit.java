@@ -37,30 +37,49 @@ public class Visit extends BaseEntity {
 
 	@Column(name = "visit_date")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	// The scheduled or historical date of the clinic visit
 	private LocalDate date;
 
 	@NotBlank
+	// Brief diagnostic description of why the pet was brought in
 	private String description;
 
 	/**
-	 * Creates a new instance of Visit for tomorrow
+	 * Creates a new instance of Visit.
+	 * Default date is initialized to tomorrow.
 	 */
 	public Visit() {
 		this.date = LocalDate.now().plusDays(1);
 	}
 
+	/**
+	 * Gets the visit date.
+	 * @return visit date
+	 */
 	public LocalDate getDate() {
 		return this.date;
 	}
 
+	/**
+	 * Sets the visit date.
+	 * @param date new visit date
+	 */
 	public void setDate(LocalDate date) {
 		this.date = date;
 	}
 
+	/**
+	 * Gets the description of the visit.
+	 * @return description
+	 */
 	public String getDescription() {
 		return this.description;
 	}
 
+	/**
+	 * Sets the description of the visit.
+	 * @param description new description text
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}

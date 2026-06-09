@@ -30,8 +30,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface PetTypeRepository extends JpaRepository<PetType, Integer> {
 
 	/**
-	 * Retrieve all {@link PetType}s from the data store.
-	 * @return a Collection of {@link PetType}s.
+	 * Retrieve all {@link PetType}s from the data store, sorted alphabetically by name.
+	 * @return a sorted List of {@link PetType}s.
 	 */
 	@Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
 	List<PetType> findPetTypes();

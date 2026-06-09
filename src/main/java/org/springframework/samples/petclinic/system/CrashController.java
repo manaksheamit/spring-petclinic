@@ -28,6 +28,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 class CrashController {
 
+	/**
+	 * Explicitly throws a RuntimeException.
+	 * This endpoint is used to demonstrate how Spring Boot handles application exceptions
+	 * and redirects users to a friendly global error page.
+	 * @return nothing, always throws RuntimeException
+	 */
 	@GetMapping("/oups")
 	public String triggerException() {
 		throw new RuntimeException(

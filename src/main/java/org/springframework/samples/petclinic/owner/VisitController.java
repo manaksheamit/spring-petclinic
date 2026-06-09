@@ -39,6 +39,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @author Dave Syer
  * @author Wick Dynex
  */
+/**
+ * Controller handling request routing and data population for booking pet visits.
+ */
 @Controller
 class VisitController {
 
@@ -48,6 +51,10 @@ class VisitController {
 		this.owners = owners;
 	}
 
+	/**
+	 * Configures binder properties. Disallows 'id' field binding to prevent security manipulation.
+	 * @param dataBinder custom binder
+	 */
 	@InitBinder
 	public void setAllowedFields(WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id", "*.id");
@@ -59,6 +66,14 @@ class VisitController {
 	 * Pet object always has an id (Even though id is not part of the form fields)
 	 * @param petId
 	 * @return Pet
+	 */
+	/**
+	 * Populates the UI model with a new Visit entity linked to the corresponding Pet and Owner.
+	 * Runs automatically before routing handler execution.
+	 * @param ownerId unique owner identifier
+	 * @param petId unique pet identifier
+	 * @param model UI model map
+	 * @return initialized Visit object
 	 */
 	@ModelAttribute("visit")
 	public Visit loadPetWithVisit(@PathVariable("ownerId") int ownerId, @PathVariable("petId") int petId,
@@ -80,23 +95,40 @@ class VisitController {
 		return visit;
 	}
 
+	/**
+	 * Populates the model with the minimum allowed visit date (tomorrow).
+	 * @return tomorrow's date
+	 */
 	@ModelAttribute("minVisitDate")
 	public LocalDate minVisitDate() {
 		return LocalDate.now().plusDays(1);
 	}
 
-	// Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is
-	// called
+	/**
+	 * Renders the form for booking a new visit.
+	 * Spring MVC calls loadPetWithVisit(...) before this method.
+	 * @return view template path
+	 */
 	@GetMapping("/owners/{ownerId}/pets/{petId}/visits/new")
 	public String initNewVisitForm() {
 		return "pets/createOrUpdateVisitForm";
 	}
 
-	// Spring MVC calls method loadPetWithVisit(...) before processNewVisitForm is
-	// called
+	/**
+	 * Processes the submission for booking a new pet visit.
+	 * Validates that the visit date is in the future.
+	 * Spring MVC calls loadPetWithVisit(...) before this method.
+	 * @param owner the owner associated with the pet
+	 * @param petId the ID of the pet
+	 * @param visit the submitted visit entity
+	 * @param result validation binding result
+	 * @param redirectAttributes redirect attributes container
+	 * @return redirect path to owner details page, or form view on failure
+	 */
 	@PostMapping("/owners/{ownerId}/pets/{petId}/visits/new")
 	public String processNewVisitForm(@ModelAttribute Owner owner, @PathVariable int petId, @Valid Visit visit,
 			BindingResult result, RedirectAttributes redirectAttributes) {
+		// Enforce that visits can only be booked for future dates
 		if (visit.getDate() != null && !visit.getDate().isAfter(LocalDate.now())) {
 			result.rejectValue("date", "typeMismatch.visitDate");
 		}

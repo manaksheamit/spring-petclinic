@@ -47,8 +47,13 @@ public class Vet extends Person {
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"),
 			inverseJoinColumns = @JoinColumn(name = "specialty_id"))
+	// Set of specialties associated with the veterinarian, loaded eagerly
 	private Set<Specialty> specialties;
 
+	/**
+	 * Internal getter for the specialties set. Initializes the set if null.
+	 * @return the set of specialties
+	 */
 	protected Set<Specialty> getSpecialtiesInternal() {
 		if (this.specialties == null) {
 			this.specialties = new HashSet<>();
@@ -56,6 +61,11 @@ public class Vet extends Person {
 		return this.specialties;
 	}
 
+	/**
+	 * Gets the list of specialties sorted alphabetically by name.
+	 * Required for XML serialization output.
+	 * @return sorted list of specialties
+	 */
 	@XmlElement
 	public List<Specialty> getSpecialties() {
 		return getSpecialtiesInternal().stream()
@@ -63,10 +73,18 @@ public class Vet extends Person {
 			.collect(Collectors.toList());
 	}
 
+	/**
+	 * Gets the count of specialties this veterinarian possesses.
+	 * @return size of the specialties set
+	 */
 	public int getNrOfSpecialties() {
 		return getSpecialtiesInternal().size();
 	}
 
+	/**
+	 * Associates a new specialty with the veterinarian.
+	 * @param specialty the specialty to add
+	 */
 	public void addSpecialty(Specialty specialty) {
 		getSpecialtiesInternal().add(specialty);
 	}

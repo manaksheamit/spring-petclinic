@@ -45,6 +45,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @author Michael Isvy
  * @author Wick Dynex
  */
+/**
+ * Controller handling request routing and business logic for Owner entities.
+ * Manages search, creation, editing, and details rendering.
+ */
 @Controller
 class OwnerController {
 
@@ -56,11 +60,22 @@ class OwnerController {
 		this.owners = owners;
 	}
 
+	/**
+	 * Configures web binder parameters.
+	 * Disallows binding the database primary "id" property to prevent security/injection bugs.
+	 * @param dataBinder custom binder instance
+	 */
 	@InitBinder
 	public void setAllowedFields(WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id", "*.id");
 	}
 
+	/**
+	 * Populates the UI model with an "owner" attribute.
+	 * If ownerId is provided in URL path, loads the existing Owner; otherwise initializes a new one.
+	 * @param ownerId unique owner identifier (optional)
+	 * @return Owner domain object
+	 */
 	@ModelAttribute("owner")
 	public Owner findOwner(@PathVariable(name = "ownerId", required = false) Integer ownerId) {
 		return ownerId == null ? new Owner()
@@ -69,11 +84,23 @@ class OwnerController {
 							+ ". Please ensure the ID is correct " + "and the owner exists in the database."));
 	}
 
+	/**
+	 * Initializes the form view for registering a new owner.
+	 * @return view template path
+	 */
 	@GetMapping("/owners/new")
 	public String initCreationForm() {
 		return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
 	}
 
+	/**
+	 * Processes the submission for creating a new owner.
+	 * Validates input parameters and redirects to details view if successful.
+	 * @param owner submitted owner model
+	 * @param result validation binding results
+	 * @param redirectAttributes helper to pass attributes to redirect page
+	 * @return redirection target or form error view path
+	 */
 	@PostMapping("/owners/new")
 	public String processCreationForm(@Valid Owner owner, BindingResult result, RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
@@ -86,11 +113,24 @@ class OwnerController {
 		return "redirect:/owners/" + owner.getId();
 	}
 
+	/**
+	 * Renders the search/find owners form.
+	 * @return view template path
+	 */
 	@GetMapping("/owners/find")
 	public String initFindForm() {
 		return "owners/findOwners";
 	}
 
+	/**
+	 * Processes the search form submission to find owners by last name.
+	 * Supports paginated results. If only one owner matches, redirects directly to details.
+	 * @param page requested page index
+	 * @param owner template owner containing search criteria
+	 * @param result validation bindings
+	 * @param model UI model object
+	 * @return redirection target or matching owners list view path
+	 */
 	@GetMapping("/owners")
 	public String processFindForm(@RequestParam(defaultValue = "1") int page, Owner owner, BindingResult result,
 			Model model) {
@@ -133,11 +173,24 @@ class OwnerController {
 		return owners.findByLastNameStartingWith(lastname, pageable);
 	}
 
+	/**
+	 * Renders the edit/update form for an existing owner.
+	 * @return view template path
+	 */
 	@GetMapping("/owners/{ownerId}/edit")
 	public String initUpdateOwnerForm() {
 		return VIEWS_OWNER_CREATE_OR_UPDATE_FORM;
 	}
 
+	/**
+	 * Processes the form submission for updating an owner.
+	 * Validates path parameters and form fields before saving.
+	 * @param owner updated owner model data
+	 * @param result validation binding results
+	 * @param ownerId path parameter owner ID
+	 * @param redirectAttributes redirect attributes container
+	 * @return redirect path to owner details or error form page
+	 */
 	@PostMapping("/owners/{ownerId}/edit")
 	public String processUpdateOwnerForm(@Valid Owner owner, BindingResult result, @PathVariable("ownerId") int ownerId,
 			RedirectAttributes redirectAttributes) {

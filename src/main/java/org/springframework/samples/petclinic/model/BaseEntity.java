@@ -34,16 +34,29 @@ public class BaseEntity implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	// Unique identifier for the database entity. Placed as primary key.
 	private Integer id;
 
+	/**
+	 * Gets the ID of the entity.
+	 * @return the entity's ID
+	 */
 	public Integer getId() {
 		return id;
 	}
 
+	/**
+	 * Sets the ID of the entity.
+	 * @param id the entity's new ID
+	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
+	/**
+	 * Check if this entity has been persisted yet (i.e. has no ID).
+	 * @return true if the entity is new/unpersisted, false otherwise
+	 */
 	public boolean isNew() {
 		return this.id == null;
 	}

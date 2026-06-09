@@ -38,16 +38,33 @@ public class PetTypeFormatter implements Formatter<PetType> {
 
 	private final PetTypeRepository types;
 
+	/**
+	 * Constructor injection for PetTypeRepository.
+	 * @param types repository to resolve pet types
+	 */
 	public PetTypeFormatter(PetTypeRepository types) {
 		this.types = types;
 	}
 
+	/**
+	 * Converts a PetType entity into its String representation (its name).
+	 * @param petType the pet type entity to print
+	 * @param locale local context
+	 * @return string representation of the pet type
+	 */
 	@Override
 	public String print(PetType petType, Locale locale) {
 		String name = petType.getName();
 		return name != null ? name : "<null>";
 	}
 
+	/**
+	 * Parses a string representation (e.g. "dog") to find the matching PetType entity.
+	 * @param text input string from web form
+	 * @param locale local context
+	 * @return corresponding PetType entity
+	 * @throws ParseException if no matching type is found
+	 */
 	@Override
 	public PetType parse(String text, Locale locale) throws ParseException {
 		Collection<PetType> findPetTypes = this.types.findPetTypes();

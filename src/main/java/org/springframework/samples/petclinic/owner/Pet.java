@@ -47,37 +47,64 @@ public class Pet extends NamedEntity {
 
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	// The pet's birth date, formatted as YYYY-MM-DD
 	private LocalDate birthDate;
 
 	@ManyToOne
 	@JoinColumn(name = "type_id")
+	// The category type of pet (e.g. cat, dog, lizard)
 	private PetType type;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "pet_id")
 	@OrderBy("date ASC")
+	// Eagerly loaded set of historical medical visits, sorted chronologically
 	private final Set<Visit> visits = new LinkedHashSet<>();
 
+	/**
+	 * Sets the birth date of the pet.
+	 * @param birthDate birth date
+	 */
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
 
+	/**
+	 * Gets the birth date of the pet.
+	 * @return birth date
+	 */
 	public LocalDate getBirthDate() {
 		return this.birthDate;
 	}
 
+	/**
+	 * Gets the pet type.
+	 * @return pet type entity
+	 */
 	public PetType getType() {
 		return this.type;
 	}
 
+	/**
+	 * Sets the pet type.
+	 * @param type pet type entity
+	 */
 	public void setType(PetType type) {
 		this.type = type;
 	}
 
+	/**
+	 * Gets the set of visits.
+	 * @return collection of visits
+	 */
 	public Collection<Visit> getVisits() {
 		return this.visits;
 	}
 
+	/**
+	 * Adds a new visit record.
+	 * @param visit visit record to add
+	 */
 	public void addVisit(Visit visit) {
 		getVisits().add(visit);
 	}

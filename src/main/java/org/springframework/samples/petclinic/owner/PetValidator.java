@@ -33,28 +33,38 @@ public class PetValidator implements Validator {
 
 	private static final String REQUIRED = "required";
 
+	/**
+	 * Performs actual validation on the Pet object attributes.
+	 * Checks that name, type, and birth date are not null/empty.
+	 * @param obj target object to validate
+	 * @param errors object to register validation errors
+	 */
 	@Override
 	public void validate(Object obj, Errors errors) {
 		Pet pet = (Pet) obj;
 		String name = pet.getName();
-		// name validation
+		
+		// Validate that name is not blank
 		if (!StringUtils.hasText(name)) {
 			errors.rejectValue("name", REQUIRED, REQUIRED);
 		}
 
-		// type validation
+		// Validate that pet type is selected for a new pet
 		if (pet.isNew() && pet.getType() == null) {
 			errors.rejectValue("type", REQUIRED, REQUIRED);
 		}
 
-		// birth date validation
+		// Validate that birth date is provided
 		if (pet.getBirthDate() == null) {
 			errors.rejectValue("birthDate", REQUIRED, REQUIRED);
 		}
 	}
 
 	/**
-	 * This Validator validates *just* Pet instances
+	 * Determines if this validator supports validation for a specific class.
+	 * Returns true only for Pet instances.
+	 * @param clazz target class
+	 * @return true if target class is Pet or subclass of Pet
 	 */
 	@Override
 	public boolean supports(Class<?> clazz) {

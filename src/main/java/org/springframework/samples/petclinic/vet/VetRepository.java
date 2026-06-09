@@ -39,17 +39,20 @@ public interface VetRepository extends Repository<Vet, Integer> {
 
 	/**
 	 * Retrieve all <code>Vet</code>s from the data store.
+	 * Results are cached in the "vets" cache region. Transaction is read-only.
 	 * @return a <code>Collection</code> of <code>Vet</code>s
+	 * @throws DataAccessException if database access fails
 	 */
 	@Transactional(readOnly = true)
 	@Cacheable("vets")
 	Collection<Vet> findAll() throws DataAccessException;
 
 	/**
-	 * Retrieve all <code>Vet</code>s from data store in Pages
-	 * @param pageable
-	 * @return
-	 * @throws DataAccessException
+	 * Retrieve a page of <code>Vet</code>s from the data store.
+	 * Results are cached in the "vets" cache region. Transaction is read-only.
+	 * @param pageable pagination and sorting information
+	 * @return a <code>Page</code> of <code>Vet</code>s
+	 * @throws DataAccessException if database access fails
 	 */
 	@Transactional(readOnly = true)
 	@Cacheable("vets")
